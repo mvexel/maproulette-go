@@ -19,3 +19,5 @@ mr := maproulette.NewMapRouletteClient(&maproulette.MapRouletteClientOptions{
 
 challenge, err := mr.GetChallenge(20202)
 ```
+
+This returns a [`Challenge`](https://github.com/mvexel/maproulette-go/blob/main/docs.md#type-challenge) struct.
