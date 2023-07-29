@@ -13,4 +13,5 @@ release: test build
 
 .PHONY: docs
 docs:
+	go get github.com/robertkrimen/godocdown
 	godocdown github.com/mvexel/maproulette-go > docs.md
