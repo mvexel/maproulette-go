@@ -7,7 +7,7 @@ build:
 	echo "Building version $(VERSION)"
 	go build -ldflags "-X main.Version=$(VERSION)" -o bin/maproulette
 
-release: test build
+release: test build docs
 	git tag $(VERSION)
 	git push origin $(VERSION)
 
