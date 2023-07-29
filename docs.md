@@ -13,6 +13,7 @@ MapRoulette API resources, such as challenges.
 ```go
 var Version string
 ```
+Version is the version of this library.
 
 #### type Challenge
 
@@ -41,9 +42,6 @@ type Challenge struct {
 ```
 
 Challenge represents a challenge in MapRoulette.
-
-This struct is used by various methods in the Client to receive and send
-challenge data.
 
 #### type Creation
 
@@ -119,7 +117,8 @@ type GeoJSON struct {
 }
 ```
 
-TODO - use real GeoJSON types from twpayne/go-geojson?
+GeoJSON represents a GeoJSON object in MapRoulette. TODO: we need a real spatial
+type here
 
 #### type Grant
 
@@ -149,9 +148,6 @@ type Grantee struct {
 
 Grantee represents a grantee in MapRoulette.
 
-This struct is used by various methods in the Client to receive and send grantee
-data.
-
 #### type GranteeType
 
 ```go
@@ -162,25 +158,39 @@ type GranteeType struct {
 
 GranteeType represents a grantee type in MapRoulette.
 
-This struct is used by various methods in the Client to receive and send grantee
-type data.
+#### type Image
+
+```go
+type Image struct {
+	Key     string  `json:"key"`
+	Lat     float64 `json:"lat"`
+	Lon     float64 `json:"lon"`
+	URL320  string  `json:"url_320"`
+	URL640  string  `json:"url_640"`
+	URL1024 string  `json:"url_1024"`
+	URL2048 string  `json:"url_2048"`
+}
+```
+
+Image represents a set of URLs pointing to Mapillary images for a Task.
 
 #### type MapRoulette
 
 ```go
 type MapRoulette struct {
-	APIKey string
+	APIKey  string
+	BaseURL string
+	Client  *http.Client
 }
 ```
 
-MapRoulette represents a client for the MapRoulette API.
-
-To create a new client, use the NewMapRouletteClient function.
+MapRoulette represents a client for the MapRoulette API. To create a new client,
+use the NewMapRouletteClient function.
 
 #### func  NewMapRouletteClient
 
 ```go
-func NewMapRouletteClient(apiKey string) *MapRoulette
+func NewMapRouletteClient(options *MapRouletteClientOptions) *MapRoulette
 ```
 NewMapRouletteClient creates a new MapRoulette API client.
 
@@ -196,11 +206,44 @@ GetChallenge returns a challenge from the MapRoulette API.
 
 The id parameter specifies the ID of the challenge to return.
 
+#### func (*MapRoulette) GetChallengeTasks
+
+```go
+func (mr *MapRoulette) GetChallengeTasks(id int, limit ...int) ([]Task, error)
+```
+GetChallengeTasks returns a list of tasks for a challenge from the MapRoulette
+API.
+
+The id parameter specifies the ID of the challenge to return. the optional limit
+parameter specifies the maximum number of tasks to return. The default limit is
+10.
+
 #### func (*MapRoulette) GetChallenges
 
 ```go
 func (mr *MapRoulette) GetChallenges(limit int) ([]Challenge, error)
 ```
+
+#### func (*MapRoulette) PostChallenge
+
+```go
+func (mr *MapRoulette) PostChallenge(challenge Challenge) (Challenge, error)
+```
+PostChallenge creates a new challenge on the MapRoulette API.
+
+The challenge parameter specifies the challenge to create.
+
+#### type MapRouletteClientOptions
+
+```go
+type MapRouletteClientOptions struct {
+	APIKey  string
+	BaseURL string
+	Client  *http.Client
+}
+```
+
+MapRouletteClientOptions represents options for a MapRoulette client.
 
 #### type ObjectType
 
@@ -211,9 +254,6 @@ type ObjectType struct {
 ```
 
 ObjectType represents an object type in MapRoulette.
-
-This struct is used by various methods in the Client to receive and send object
-type data.
 
 #### type Priority
 
@@ -252,6 +292,26 @@ Project represents a project in MapRoulette.
 This struct is used by various methods in the Client to receive and send project
 data.
 
+#### type Review
+
+```go
+type Review struct {
+	ReviewStatus        int    `json:"reviewStatus"`
+	ReviewRequestedBy   int    `json:"reviewRequestedBy"`
+	ReviewedBy          int    `json:"reviewedBy"`
+	ReviewedAt          string `json:"reviewedAt"`
+	MetaReviewedBy      int    `json:"metaReviewedBy"`
+	MetaReviewStatus    int    `json:"metaReviewStatus"`
+	MetaReviewedAt      string `json:"metaReviewedAt"`
+	ReviewStartedAt     string `json:"reviewStartedAt"`
+	ReviewClaimedBy     int    `json:"reviewClaimedBy"`
+	ReviewClaimedAt     string `json:"reviewClaimedAt"`
+	AdditionalReviewers []int  `json:"additionalReviewers"`
+}
+```
+
+Review represents review data for a Task in MapRoulette.
+
 #### type Target
 
 ```go
@@ -263,5 +323,32 @@ type Target struct {
 
 Target represents a target in MapRoulette.
 
-This struct is used by various methods in the Client to receive and send target
-data.
+#### type Task
+
+```go
+type Task struct {
+	ID                  int64   `json:"id"`
+	Name                string  `json:"name"`
+	Created             string  `json:"created"`
+	Modified            string  `json:"modified"`
+	Parent              int64   `json:"parent"`
+	Instruction         string  `json:"instruction"`
+	Location            GeoJSON `json:"location"`
+	Geometries          GeoJSON `json:"geometries"`
+	CooperativeWork     string  `json:"cooperativeWork"`
+	Status              int     `json:"status"`
+	MappedOn            string  `json:"mappedOn"`
+	CompletedTimeSpent  int64   `json:"completedTimeSpent"`
+	CompletedBy         int64   `json:"completedBy"`
+	Review              Review  `json:"review"`
+	Priority            int     `json:"priority"`
+	ChangesetId         int64   `json:"changesetId"`
+	CompletionResponses string  `json:"completionResponses"`
+	BundleId            int64   `json:"bundleId"`
+	IsBundlePrimary     bool    `json:"isBundlePrimary"`
+	MapillaryImages     []Image `json:"mapillaryImages"`
+	ErrorTags           string  `json:"errorTags"`
+}
+```
+
+Task represents a task in MapRoulette.
