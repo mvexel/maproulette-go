@@ -5,7 +5,7 @@ test:
 
 build:
 	echo "Building version $(VERSION)"
-	go build -ldflags "-X main.Version=$(VERSION)" -o maproulette
+	go build -ldflags "-X main.Version=$(VERSION)" -o bin/maproulette
 
 release: test build
 	git tag $(VERSION)
