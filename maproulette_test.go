@@ -1,6 +1,7 @@
 package maproulette
 
 import (
+	"context"
 	"testing"
 	// maproulette "github.com/mvexel/maproulette-go"
 )
@@ -15,7 +16,8 @@ func TestGetChallenge(t *testing.T) {
 		APIKey:  testApiKey,
 		BaseURL: testBaseURL,
 	})
-	challenge, err := mr.GetChallenge(1)
+	ctx := context.Background()
+	challenge, err := mr.GetChallenge(ctx, 1)
 	if err != nil {
 		t.Errorf("Error getting challenge: %v", err)
 	}
@@ -38,12 +40,34 @@ func TestGetTasks(t *testing.T) {
 		APIKey:  testApiKey,
 		BaseURL: testBaseURL,
 	})
-	tasks, err := mr.GetChallengeTasks(1)
+	ctx := context.Background()
+	tasks, err := mr.GetChallengeTasks(ctx, 1)
 	if err != nil {
 		t.Errorf("Error getting task: %v", err)
 	}
-	// if tasks count is not 10, we have a problem
 	if len(tasks) != 10 {
 		t.Errorf("Expected 10 tasks, got %d", len(tasks))
+	}
+}
+
+// test the GetRandomChallengeTasks function
+func TestGetRandomChallengeTasks(t *testing.T) {
+	mr := NewMapRouletteClient(&MapRouletteClientOptions{
+		APIKey:  testApiKey,
+		BaseURL: testBaseURL,
+	})
+	ctx := context.Background()
+	tasks, err := mr.GetRandomChallengeTasks(ctx, &GetRandomChallengeTasksOptions{
+		ChallengeID: 1,
+		Limit:       1,
+	})
+	if err != nil {
+		t.Errorf("Error getting task: %v", err)
+	}
+	if len(tasks) != 1 {
+		t.Errorf("Expected 10 tasks, got %d", len(tasks))
+	}
+	if tasks[0].Parent != 1 {
+		t.Errorf("Expected parent 1, got %d", tasks[1].Parent)
 	}
 }

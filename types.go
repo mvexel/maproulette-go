@@ -208,3 +208,19 @@ type Image struct {
 	URL1024 string  `json:"url_1024"`
 	URL2048 string  `json:"url_2048"`
 }
+
+// GetRandomChallengeTasksOptions represents options for the GetRandomChallengeTasks method.
+type GetRandomChallengeTasksOptions struct {
+	ChallengeID int
+	Search      string
+	Tags        []string
+	Limit       int
+	Proximity   int
+}
+
+// PostTasksToChallengeOptions represents options for the PostTasksToChallenge method.
+type Add struct {
+	ChallengeID  int
+	Instructions string
+	GeoJSON      string
+}
