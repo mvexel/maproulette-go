@@ -126,3 +126,16 @@ func (mr *MapRoulette) AddTasksToChallenge(ctx context.Context, id int, tasks []
 	}
 	return newTasks, nil
 }
+
+// AddTasks adds tasks to a Challenge from the GeoJSON payload.
+// We make no attempt to validate the GeoJSON payload.
+//
+// The id parameter specifies the ID of the challenge to add tasks to.
+// The payload parameter specifies the GeoJSON payload containing the tasks to add.
+// Return value is the HTTP response code.
+//
+// This function requires an API key with write access to the challenge.
+func (mr *MapRoulette) AddTasks(ctx context.Context, id int, payload []byte) error {
+	url := fmt.Sprintf("%s/challenge/%d/tasks", mr.BaseURL, id)
+	return mr.doRequest(ctx, http.MethodPost, url, payload, nil)
+}

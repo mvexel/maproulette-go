@@ -21,6 +21,9 @@ func (mr *MapRoulette) doRequest(ctx context.Context, method, url string, payloa
 	switch method {
 	case http.MethodGet, http.MethodDelete:
 		req, err = http.NewRequestWithContext(ctx, method, url, nil)
+		if err != nil {
+			return err
+		}
 	case http.MethodPost, http.MethodPut:
 		// Convert payload to JSON
 		jsonPayload, err := json.Marshal(payload)
@@ -28,9 +31,12 @@ func (mr *MapRoulette) doRequest(ctx context.Context, method, url string, payloa
 			return err
 		}
 		req, err = http.NewRequestWithContext(ctx, method, url, bytes.NewBuffer(jsonPayload))
+		if err != nil {
+			return err
+		}
 		req.Header.Set("Content-Type", "application/json")
 	default:
-		return fmt.Errorf("Invalid method: %s", method)
+		return fmt.Errorf("invalid method: %s", method)
 	}
 
 	if err != nil {

@@ -1,6 +1,10 @@
 package maproulette
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/paulmach/orb/geojson"
+)
 
 // MapRoulette represents a client for the MapRoulette API.
 // To create a new client, use the NewMapRouletteClient function.
@@ -17,13 +21,6 @@ type MapRouletteClientOptions struct {
 	Client  *http.Client
 }
 
-// GeoJSON represents a GeoJSON object in MapRoulette.
-// TODO: we need a real spatial type here
-type GeoJSON struct {
-	Type        string      `json:"type"`
-	Coordinates interface{} `json:"coordinates"` // []float64 for Point, [][]float64 for Polygon
-}
-
 // Challenge represents a challenge in MapRoulette.
 type Challenge struct {
 	ID                   int    `json:"id"`
@@ -37,14 +34,14 @@ type Challenge struct {
 	Creation             Creation
 	Priority             Priority
 	Extra                Extra
-	Status               int     `json:"status"`
-	StatusMessage        string  `json:"statusMessage"`
-	LastTaskRefresh      string  `json:"lastTaskRefresh"`
-	DataOriginDate       string  `json:"dataOriginDate"`
-	Location             GeoJSON `json:"location"`
-	Bounding             GeoJSON `json:"bounding"`
-	CompletionPercentage int     `json:"completionPercentage"`
-	TasksRemaining       int     `json:"tasksRemaining"`
+	Status               int              `json:"status"`
+	StatusMessage        string           `json:"statusMessage"`
+	LastTaskRefresh      string           `json:"lastTaskRefresh"`
+	DataOriginDate       string           `json:"dataOriginDate"`
+	Location             geojson.Geometry `json:"location"`
+	Bounding             geojson.Geometry `json:"bounding"`
+	CompletionPercentage int              `json:"completionPercentage"`
+	TasksRemaining       int              `json:"tasksRemaining"`
 }
 
 // General represents the general section of a challenge with basic information
@@ -68,9 +65,9 @@ type General struct {
 // Creation represents the creation section of a challenge with information
 // about the overpass query or remote GeoJSON link.
 type Creation struct {
-	OverpassQL         string `json:"overpassQL"`
-	RemoteGeoJson      string `json:"remoteGeoJson"`
-	OverpassTargetType string `json:"overpassTargetType"`
+	OverpassQL         string                    `json:"overpassQL"`
+	RemoteGeoJson      geojson.FeatureCollection `json:"remoteGeoJson"`
+	OverpassTargetType string                    `json:"overpassTargetType"`
 }
 
 // Priority represents the priority section of a challenge with information
@@ -160,27 +157,27 @@ type ObjectType struct {
 
 // Task represents a task in MapRoulette.
 type Task struct {
-	ID                  int64   `json:"id"`
-	Name                string  `json:"name"`
-	Created             string  `json:"created"`
-	Modified            string  `json:"modified"`
-	Parent              int64   `json:"parent"`
-	Instruction         string  `json:"instruction"`
-	Location            GeoJSON `json:"location"`
-	Geometries          GeoJSON `json:"geometries"`
-	CooperativeWork     string  `json:"cooperativeWork"`
-	Status              int     `json:"status"`
-	MappedOn            string  `json:"mappedOn"`
-	CompletedTimeSpent  int64   `json:"completedTimeSpent"`
-	CompletedBy         int64   `json:"completedBy"`
-	Review              Review  `json:"review"`
-	Priority            int     `json:"priority"`
-	ChangesetId         int64   `json:"changesetId"`
-	CompletionResponses string  `json:"completionResponses"`
-	BundleId            int64   `json:"bundleId"`
-	IsBundlePrimary     bool    `json:"isBundlePrimary"`
-	MapillaryImages     []Image `json:"mapillaryImages"`
-	ErrorTags           string  `json:"errorTags"`
+	ID                  int64                     `json:"id"`
+	Name                string                    `json:"name"`
+	Created             string                    `json:"created"`
+	Modified            string                    `json:"modified"`
+	Parent              int64                     `json:"parent"`
+	Instruction         string                    `json:"instruction"`
+	Location            geojson.Feature           `json:"location"`
+	Geometries          geojson.FeatureCollection `json:"geometries"`
+	CooperativeWork     string                    `json:"cooperativeWork"`
+	Status              int                       `json:"status"`
+	MappedOn            string                    `json:"mappedOn"`
+	CompletedTimeSpent  int64                     `json:"completedTimeSpent"`
+	CompletedBy         int64                     `json:"completedBy"`
+	Review              Review                    `json:"review"`
+	Priority            int                       `json:"priority"`
+	ChangesetId         int64                     `json:"changesetId"`
+	CompletionResponses string                    `json:"completionResponses"`
+	BundleId            int64                     `json:"bundleId"`
+	IsBundlePrimary     bool                      `json:"isBundlePrimary"`
+	MapillaryImages     []Image                   `json:"mapillaryImages"`
+	ErrorTags           string                    `json:"errorTags"`
 }
 
 // Review represents review data for a Task in MapRoulette.
